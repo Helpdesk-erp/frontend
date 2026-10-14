@@ -1,0 +1,6 @@
+# Configuración de pnpm para este proyecto.
+
+# Solo instala versiones publicadas hace al menos un día (1440 minutos). Los paquetes
+# maliciosos que se cuelan en el registro suelen detectarse y retirarse en pocas horas;
+# con esta espera, una versión recién comprometida no alcanza a llegar al proyecto.
+minimumReleaseAge: 1440
