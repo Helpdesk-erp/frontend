@@ -1,8 +1,9 @@
 import { createTheme } from '@mui/material/styles'
 
-// Sigue el modo claro u oscuro del sistema operativo
+// Modo claro y oscuro. Por defecto sigue al sistema operativo; el botón de BotonTema.jsx
+// lo cambia y MUI marca la página con el atributo data-light o data-dark.
 export const tema = createTheme({
-  cssVariables: { colorSchemeSelector: 'media' },
+  cssVariables: { colorSchemeSelector: 'data' },
   colorSchemes: {
     light: {
       palette: {

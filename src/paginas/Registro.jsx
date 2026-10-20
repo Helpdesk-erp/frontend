@@ -5,6 +5,7 @@ import {
   Alert, Box, Button, Divider, FormControlLabel, Grid, Link, MenuItem, Radio, RadioGroup, Stack, Typography,
 } from '@mui/material'
 import { useSesion } from '../auth/sesion.js'
+import BotonTema from '../componentes/BotonTema.jsx'
 import CampoTexto from '../componentes/CampoTexto.jsx'
 import PanelMarca from '../componentes/PanelMarca.jsx'
 import { DEPARTAMENTOS } from '../utilidades/formato.js'
@@ -90,7 +91,8 @@ export default function Registro() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 7fr' } }}>
       <PanelMarca />
-      <Box sx={{ display: 'flex', justifyContent: 'center', px: 2, py: { xs: 4, md: 6 } }}>
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', px: 2, py: { xs: 4, md: 6 } }}>
+        <BotonTema sx={{ position: 'absolute', top: 12, right: 12 }} />
         <Box component="form" noValidate onSubmit={handleSubmit(enviar)} sx={{ width: '100%', maxWidth: 640 }}>
           <Typography variant="h4" component="h1">Crear cuenta</Typography>
           <Typography sx={{ color: 'text.secondary', mt: 1, mb: 3 }}>

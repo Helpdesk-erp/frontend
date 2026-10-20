@@ -1,6 +1,6 @@
-import { useMediaQuery } from '@mui/material'
 import { BarChart } from '@mui/x-charts/BarChart'
 import { COLORES_GRAFICO } from '../tema.js'
+import { useModoOscuro } from '../utilidades/useModoOscuro.js'
 import Vacio from './Vacio.jsx'
 
 const ALTO_FILA = 44
@@ -14,7 +14,7 @@ const ALTO_FILA = 44
  * @param {string} campoValor    número de cada barra (por ejemplo "total")
  */
 export default function GraficoBarras({ datos, campoEtiqueta, campoValor, etiquetaSerie, formato = (v) => String(v), vacio }) {
-  const oscuro = useMediaQuery('(prefers-color-scheme: dark)')
+  const { oscuro } = useModoOscuro()
   const colores = oscuro ? COLORES_GRAFICO.oscuro : COLORES_GRAFICO.claro
 
   if (!datos?.length) return <Vacio>{vacio}</Vacio>

@@ -19,7 +19,8 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider theme={tema}>
+    {/* noSsr: la aplicación corre solo en el navegador, así el modo se conoce desde el primer render */}
+    <ThemeProvider theme={tema} defaultMode="system" noSsr disableTransitionOnChange>
       <CssBaseline enableColorScheme />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>

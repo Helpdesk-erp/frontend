@@ -10,6 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboardOutlined'
 import SupportAgentIcon from '@mui/icons-material/SupportAgentOutlined'
 import { NOMBRE_ROL, RUTA_POR_ROL, useSesion } from '../auth/sesion.js'
+import BotonTema from './BotonTema.jsx'
 import { CargandoDashboard } from './Cargando.jsx'
 
 const ANCHO_MENU = 248
@@ -65,6 +66,7 @@ export default function Marco() {
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Helpdesk ERP</Typography>
           </Stack>
           <Box sx={{ flexGrow: 1 }} />
+          <BotonTema />
           <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
             <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{usuario.nombre}</Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>{NOMBRE_ROL[usuario.rol]}</Typography>

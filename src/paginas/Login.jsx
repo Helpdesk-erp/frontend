@@ -7,6 +7,7 @@ import {
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined'
 import { useSesion } from '../auth/sesion.js'
+import BotonTema from '../componentes/BotonTema.jsx'
 import CampoTexto from '../componentes/CampoTexto.jsx'
 import PanelMarca from '../componentes/PanelMarca.jsx'
 
@@ -46,7 +47,8 @@ export default function Login() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
       <PanelMarca />
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2, py: 6 }}>
+      <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', px: 2, py: 6 }}>
+        <BotonTema sx={{ position: 'absolute', top: 12, right: 12 }} />
         <Box component="form" noValidate onSubmit={handleSubmit(enviar)} sx={{ width: '100%', maxWidth: 400 }}>
           <Typography variant="h4" component="h1">Iniciar sesión</Typography>
           <Typography sx={{ color: 'text.secondary', mt: 1, mb: 3 }}>

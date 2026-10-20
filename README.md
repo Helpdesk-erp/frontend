@@ -54,4 +54,4 @@ No suba un `package-lock.json`. Si alguien corre `npm install` por error, el `.g
 | React Hook Form | Formularios con validación por campo. Los errores del backend llegan al campo con `setError` |
 | Material UI y MUI X Charts | Componentes adaptables a celular y gráficos de barras |
 
-El tema sigue el modo claro u oscuro del sistema operativo.
+El tema arranca en el modo claro u oscuro del sistema operativo. El botón de sol y luna de la barra superior (y del login y el registro) lo cambia, y el navegador recuerda la elección.
