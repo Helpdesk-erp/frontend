@@ -23,7 +23,7 @@ export default function PanelMarca() {
         </Typography>
       </Box>
       <Typography variant="caption" sx={{ opacity: 0.8 }}>
-        Proyecto de aula · Bases de Datos No Relacionales · UFPS Ocaña
+       
       </Typography>
     </Box>
   )
