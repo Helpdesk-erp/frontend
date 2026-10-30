@@ -10,7 +10,9 @@ import Encabezado from '../../componentes/Encabezado.jsx'
 import GraficoBarras from '../../componentes/GraficoBarras.jsx'
 import Seccion from '../../componentes/Seccion.jsx'
 import { IndicadoresTickets } from '../../componentes/TarjetaIndicador.jsx'
-import { ESTADOS_CAPACITACION, fechaHora, numero, PAQUETES, pesos, primerNombre } from '../../utilidades/formato.js'
+import {
+  ESTADOS_CAPACITACION, fechaHora, METODOS_PAGO, numero, PAQUETES, pesos, pesosCortos, primerNombre,
+} from '../../utilidades/formato.js'
 
 const NUMERICA = { fontVariantNumeric: 'tabular-nums' }
 const SOLO_ESCRITORIO = { display: { xs: 'none', md: 'table-cell' } }
@@ -25,6 +27,8 @@ export default function DashboardAuditor() {
 
   if (isPending) return <CargandoDashboard />
   if (error) return <ErrorCarga error={error} />
+
+  const recaudoPorMetodo = data.recaudo_por_metodo.map((fila) => ({ ...fila, nombre: METODOS_PAGO[fila.metodo] ?? fila.metodo }))
 
   return (
     <Stack spacing={3}>
@@ -109,6 +113,53 @@ export default function DashboardAuditor() {
                       <TableCell align="right" sx={{ ...NUMERICA, pr: 2.5 }}>{fila.calificacion != null ? `${numero(fila.calificacion)} / 5` : '-'}</TableCell>
                     </TableRow>
                   ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Seccion>
+        </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Seccion titulo="Recaudo por método de pago" subtitulo="Pagos aprobados según el medio que usó el cliente">
+            <GraficoBarras
+              datos={recaudoPorMetodo}
+              campoEtiqueta="nombre"
+              campoValor="recaudado"
+              etiquetaSerie="Recaudado"
+              formato={pesosCortos}
+              holgura={1.4}
+              vacio="Todavía no hay pagos registrados."
+            />
+          </Seccion>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Seccion titulo="Trazabilidad de la base de conocimiento" subtitulo="Cada artículo con el ticket que le dio origen" sinRelleno>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ pl: 2.5 }}>Artículo</TableCell>
+                    <TableCell>Ticket de origen</TableCell>
+                    <TableCell sx={{ pr: 2.5 }}>Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.trazabilidad_conocimiento.map((articulo) => {
+                    const ticket = articulo.ticket[0]
+                    return (
+                      <TableRow key={articulo.id}>
+                        <TableCell sx={{ pl: 2.5 }}>
+                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{articulo.id}</Typography>
+                          <Typography variant="body2">{articulo.titulo}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{articulo.ticket_id}</Typography>
+                          <Typography variant="body2">{ticket?.asunto ?? 'El ticket ya no existe'}</Typography>
+                        </TableCell>
+                        <TableCell sx={{ pr: 2.5 }}>{ticket ? <ChipEstadoTicket estado={ticket.estado} /> : '-'}</TableCell>
+                      </TableRow>
+                    )
+                  })}
                 </TableBody>
               </Table>
             </TableContainer>

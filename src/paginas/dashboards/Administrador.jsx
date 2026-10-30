@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { Avatar, Box, Divider, Grid, Stack, Typography } from '@mui/material'
+import {
+  Avatar, Box, Divider, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
+} from '@mui/material'
 import { api } from '../../api/cliente.js'
-import { useSesion } from '../../auth/sesion.js'
+import { NOMBRE_ROL, useSesion } from '../../auth/sesion.js'
 import { CargandoDashboard, ErrorCarga } from '../../componentes/Cargando.jsx'
-import { ChipPaquete } from '../../componentes/Chips.jsx'
+import { ChipEstado, ChipPaquete } from '../../componentes/Chips.jsx'
 import Encabezado from '../../componentes/Encabezado.jsx'
 import GraficoBarras from '../../componentes/GraficoBarras.jsx'
 import ListaCapacitaciones from '../../componentes/ListaCapacitaciones.jsx'
@@ -11,7 +13,9 @@ import Seccion from '../../componentes/Seccion.jsx'
 import TablaTickets from '../../componentes/TablaTickets.jsx'
 import { IndicadoresTickets } from '../../componentes/TarjetaIndicador.jsx'
 import Vacio from '../../componentes/Vacio.jsx'
-import { numero, periodo, pesos, primerNombre } from '../../utilidades/formato.js'
+import { fechaHora, numero, periodo, pesos, primerNombre } from '../../utilidades/formato.js'
+
+const SOLO_ESCRITORIO = { display: { xs: 'none', md: 'table-cell' } }
 
 function Cifra({ etiqueta, valor, detalle }) {
   return (
@@ -135,6 +139,40 @@ export default function DashboardAdministrador() {
         <Grid size={{ xs: 12, md: 6 }}>
           <Seccion titulo="Próximas capacitaciones">
             <ListaCapacitaciones capacitaciones={data.proximas_capacitaciones} vacio="No hay capacitaciones programadas." />
+          </Seccion>
+        </Grid>
+
+        <Grid size={12}>
+          <Seccion titulo="Usuarios del sistema" subtitulo="Cuentas de empleados y clientes, sin datos de acceso" sinRelleno>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ pl: 2.5 }}>Usuario</TableCell>
+                    <TableCell>Rol</TableCell>
+                    <TableCell sx={SOLO_ESCRITORIO}>Vinculado a</TableCell>
+                    <TableCell sx={SOLO_ESCRITORIO}>Último acceso</TableCell>
+                    <TableCell sx={{ pr: 2.5 }}>Estado</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.usuarios.map((cuenta) => (
+                    <TableRow key={cuenta.id}>
+                      <TableCell sx={{ pl: 2.5 }}>
+                        <Typography variant="body2">{cuenta.usuario}</Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>{cuenta.correo}</Typography>
+                      </TableCell>
+                      <TableCell>{NOMBRE_ROL[cuenta.rol] ?? cuenta.rol}</TableCell>
+                      <TableCell sx={SOLO_ESCRITORIO}>
+                        {cuenta.vinculo === 'empleado' ? 'Empleado' : 'Cliente'} {cuenta.vinculo_id}
+                      </TableCell>
+                      <TableCell sx={{ ...SOLO_ESCRITORIO, whiteSpace: 'nowrap' }}>{fechaHora(cuenta.ultimo_acceso)}</TableCell>
+                      <TableCell sx={{ pr: 2.5 }}><ChipEstado estado={cuenta.estado} /></TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </Seccion>
         </Grid>
       </Grid>

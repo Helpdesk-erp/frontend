@@ -6,7 +6,7 @@ import { api } from '../../api/cliente.js'
 import { useSesion } from '../../auth/sesion.js'
 import BuscadorConocimiento from '../../componentes/BuscadorConocimiento.jsx'
 import { CargandoDashboard, ErrorCarga } from '../../componentes/Cargando.jsx'
-import { ChipEstado } from '../../componentes/Chips.jsx'
+import { ChipEstado, ChipPaquete } from '../../componentes/Chips.jsx'
 import Encabezado from '../../componentes/Encabezado.jsx'
 import ListaCapacitaciones from '../../componentes/ListaCapacitaciones.jsx'
 import Seccion from '../../componentes/Seccion.jsx'
@@ -40,6 +40,7 @@ export default function DashboardCliente() {
   const { cliente, tickets_por_estado: conteo } = data
   const paquetes = cliente.paquetes_contratados ?? []
   const suspendidos = paquetes.filter((p) => p.estado === 'suspendido')
+  const contratados = new Set(paquetes.map((p) => p.paquete_id))
 
   return (
     <Stack spacing={3}>
@@ -107,6 +108,47 @@ export default function DashboardCliente() {
         <Grid size={{ xs: 12, lg: 5 }}>
           <Seccion titulo="Capacitaciones" subtitulo="Para los paquetes que tiene activos">
             <ListaCapacitaciones capacitaciones={data.capacitaciones} conInscripcion vacio="No hay capacitaciones próximas para sus paquetes." />
+          </Seccion>
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 7 }}>
+          <Seccion titulo="Soluciones por confirmar" subtitulo="Soporte marcó estos tickets como resueltos. Revise la solución antes de cerrarlos">
+            {data.por_confirmar.length === 0 ? (
+              <Vacio>No tiene tickets esperando su confirmación.</Vacio>
+            ) : (
+              <Stack divider={<Divider flexItem />} spacing={1.5}>
+                {data.por_confirmar.map((ticket) => (
+                  <Box key={ticket.id}>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5 }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>{ticket.id}</Typography>
+                      <ChipPaquete paquete={ticket.paquete} />
+                    </Stack>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{ticket.asunto}</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>{ticket.solucion}</Typography>
+                  </Box>
+                ))}
+              </Stack>
+            )}
+          </Seccion>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 5 }}>
+          <Seccion titulo="Catálogo de paquetes" subtitulo="Módulos del ERP, del de mayor al de menor precio">
+            <Stack divider={<Divider flexItem />} spacing={1.5}>
+              {data.catalogo_paquetes.map((p) => (
+                <Stack key={p.id} direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{p.nombre}</Typography>
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>{p.descripcion}</Typography>
+                  </Box>
+                  <Box sx={{ textAlign: 'right', flexShrink: 0 }}>
+                    <Typography variant="body2" sx={{ fontVariantNumeric: 'tabular-nums' }}>{pesos(p.precio_mensual)}</Typography>
+                    {contratados.has(p.id) && (
+                      <Typography variant="caption" sx={{ display: 'block', color: 'success.main' }}>Contratado</Typography>
+                    )}
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
           </Seccion>
         </Grid>
 

@@ -12,8 +12,9 @@ const ALTO_FILA = 44
  * @param {object[]} datos      filas que devuelve el backend
  * @param {string} campoEtiqueta nombre de cada barra (por ejemplo "nombre")
  * @param {string} campoValor    número de cada barra (por ejemplo "total")
+ * @param {number} holgura       cuánto se alarga el eje sobre la barra más larga; súbala si el valor es un texto largo
  */
-export default function GraficoBarras({ datos, campoEtiqueta, campoValor, etiquetaSerie, formato = (v) => String(v), vacio }) {
+export default function GraficoBarras({ datos, campoEtiqueta, campoValor, etiquetaSerie, formato = (v) => String(v), vacio, holgura = 1.15 }) {
   const { oscuro } = useModoOscuro()
   const colores = oscuro ? COLORES_GRAFICO.oscuro : COLORES_GRAFICO.claro
 
@@ -25,8 +26,8 @@ export default function GraficoBarras({ datos, campoEtiqueta, campoValor, etique
       height={datos.length * ALTO_FILA + 48}
       dataset={datos}
       yAxis={[{ scaleType: 'band', dataKey: campoEtiqueta, width: 110, categoryGapRatio: 0.5, disableLine: true, disableTicks: true }]}
-      // 15 % de aire a la derecha para que el valor de la barra más larga no quede recortado
-      xAxis={[{ tickMinStep: 1, valueFormatter: formato, disableLine: true, domainLimit: (_min, max) => ({ min: 0, max: max * 1.15 }) }]}
+      // Aire a la derecha (15 % por defecto) para que el valor de la barra más larga no quede recortado
+      xAxis={[{ tickMinStep: 1, valueFormatter: formato, disableLine: true, domainLimit: (_min, max) => ({ min: 0, max: max * holgura }) }]}
       series={[{
         dataKey: campoValor,
         label: etiquetaSerie,
