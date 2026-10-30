@@ -19,6 +19,12 @@ export const hora = (valor) => formatoHora.format(new Date(valor))
 export const dia = (valor) => formatoDia.format(new Date(valor))
 export const mes = (valor) => formatoMes.format(new Date(valor)).replace('.', '')
 export const pesos = (valor) => formatoPesos.format(valor ?? 0)
+/** Para etiquetas de gráficos, donde la cifra completa no cabe: 1150000 -> "$ 1,2 M", 570000 -> "$ 570 mil" */
+export const pesosCortos = (valor = 0) => {
+  if (valor >= 1_000_000) return `$ ${formatoNumero.format(Math.round(valor / 100_000) / 10)} M`
+  if (valor >= 1000) return `$ ${formatoNumero.format(Math.round(valor / 1000))} mil`
+  return pesos(valor)
+}
 export const numero = (valor) => formatoNumero.format(valor ?? 0)
 
 /** "Andrés Felipe Carrascal Rincón" -> "Andrés" */
