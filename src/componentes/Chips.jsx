@@ -23,15 +23,19 @@ export function ChipPaquete({ paquete }) {
   return <Chip size="small" label={PAQUETES[paquete] ?? paquete} />
 }
 
-/** Estado de un paquete contratado, de un pago o de un usuario. */
+/** Estado de un paquete contratado, de un pago, de un usuario, de un empleado o de una capacitación. */
 export function ChipEstado({ estado }) {
   const colores = {
     activo: 'success', aprobado: 'success', suspendido: 'error', rechazado: 'error', vencido: 'default', pendiente: 'warning',
-    inactivo: 'default', bloqueado: 'error',
+    inactivo: 'default', bloqueado: 'error', retirado: 'default',
+    programada: 'info', en_curso: 'primary', finalizada: 'default', cancelada: 'error',
+    inscrito: 'info', asistio: 'success', no_asistio: 'default', cancelado: 'default',
   }
   const textos = {
     activo: 'Activo', aprobado: 'Aprobado', suspendido: 'Suspendido', rechazado: 'Rechazado', vencido: 'Vencido', pendiente: 'Pendiente',
-    inactivo: 'Inactivo', bloqueado: 'Bloqueado',
+    inactivo: 'Inactivo', bloqueado: 'Bloqueado', retirado: 'Retirado',
+    programada: 'Programada', en_curso: 'En curso', finalizada: 'Finalizada', cancelada: 'Cancelada',
+    inscrito: 'Inscrito', asistio: 'Asistió', no_asistio: 'No asistió', cancelado: 'Cancelado',
   }
   return <Chip size="small" variant="outlined" color={colores[estado] ?? 'default'} label={textos[estado] ?? estado} />
 }

@@ -5,6 +5,8 @@ import { Controller } from 'react-hook-form'
  * TextField de MUI conectado a React Hook Form. Muestra el error del campo
  * (de la validación local o el que devuelve el backend con setError).
  * Con `select` funciona como lista desplegable; las opciones van como hijos.
+ * Los campos que no están en los defaultValues del formulario (por ejemplo, los
+ * del formulario dinámico del ticket) arrancan vacíos.
  */
 export default function CampoTexto({ control, name, rules, helperText, children, ...props }) {
   return (
@@ -12,10 +14,12 @@ export default function CampoTexto({ control, name, rules, helperText, children,
       name={name}
       control={control}
       rules={rules}
+      defaultValue=""
       render={({ field: { ref, ...field }, fieldState }) => (
         <TextField
           {...field}
           {...props}
+          value={field.value ?? ''}
           inputRef={ref}
           fullWidth
           error={Boolean(fieldState.error)}

@@ -85,3 +85,30 @@ export const DEPARTAMENTOS = [
   'Putumayo', 'Quindío', 'Risaralda', 'San Andrés y Providencia', 'Santander', 'Sucre',
   'Tolima', 'Valle del Cauca', 'Vaupés', 'Vichada',
 ]
+
+export const NOMBRE_DOCUMENTO = { CC: 'Cédula de ciudadanía', CE: 'Cédula de extranjería', NIT: 'NIT' }
+
+export const SEXOS = { masculino: 'Masculino', femenino: 'Femenino', otro: 'Otro' }
+
+export const ESTADOS_CIVILES = {
+  soltero: 'Soltero(a)',
+  casado: 'Casado(a)',
+  union_libre: 'Unión libre',
+  divorciado: 'Divorciado(a)',
+  viudo: 'Viudo(a)',
+}
+
+export const AREAS = { administracion: 'Administración', soporte: 'Soporte', auditoria: 'Auditoría' }
+
+export const TIPOS_CONTRATO = {
+  indefinido: 'Indefinido',
+  termino_fijo: 'Término fijo',
+  prestacion_servicios: 'Prestación de servicios',
+}
+
+export const JORNADAS = { tiempo_completo: 'Tiempo completo', medio_tiempo: 'Medio tiempo' }
+
+export const MODALIDADES_TRABAJO = { presencial: 'Presencial', remoto: 'Remoto', hibrido: 'Híbrido' }
+
+/** Rol que se sugiere para la cuenta de un empleado según su área. */
+export const ROL_POR_AREA = { administracion: 'administrador', soporte: 'agente_soporte', auditoria: 'auditor' }

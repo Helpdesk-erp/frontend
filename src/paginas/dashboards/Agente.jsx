@@ -1,5 +1,6 @@
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Grid, Stack } from '@mui/material'
+import { Button, Grid, Stack } from '@mui/material'
 import { api } from '../../api/cliente.js'
 import { useSesion } from '../../auth/sesion.js'
 import BuscadorConocimiento from '../../componentes/BuscadorConocimiento.jsx'
@@ -37,12 +38,17 @@ export default function DashboardAgente() {
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, lg: 7 }}>
-          <Seccion titulo="Mis tickets abiertos" subtitulo="Asignados o en proceso" sinRelleno>
+          <Seccion
+            titulo="Mis tickets abiertos"
+            subtitulo="Asignados o en proceso. Abra uno para atenderlo"
+            accion={<Button component={RouterLink} to="/tickets" size="small">Ver todos</Button>}
+            sinRelleno
+          >
             <TablaTickets tickets={data.mis_tickets} persona="cliente" vacio="No tiene tickets pendientes." />
           </Seccion>
         </Grid>
         <Grid size={{ xs: 12, lg: 5 }}>
-          <Seccion titulo="Capacitaciones que dicto">
+          <Seccion titulo="Capacitaciones que dicto" accion={<Button component={RouterLink} to="/capacitaciones" size="small">Ver todas</Button>}>
             <ListaCapacitaciones capacitaciones={data.mis_capacitaciones} vacio="No tiene capacitaciones programadas." />
           </Seccion>
         </Grid>

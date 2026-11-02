@@ -1,9 +1,10 @@
 import { Navigate, useLocation } from 'react-router'
-import { RUTA_POR_ROL, useSesion } from './sesion.js'
+import { RUTA_POR_ROL, tienePermiso, useSesion } from './sesion.js'
 
 /**
  * Exige sesión iniciada. Con `rol` o `permiso`, además exige ese rol o ese
- * permiso; si no lo tiene, manda al usuario a su propio dashboard.
+ * permiso (con una lista de permisos basta con tener uno); si no lo tiene,
+ * manda al usuario a su propio dashboard.
  * El backend vuelve a revisar todo esto: aquí solo se evita mostrar pantallas inútiles.
  */
 export default function RutaProtegida({ rol, permiso, children }) {
@@ -13,7 +14,7 @@ export default function RutaProtegida({ rol, permiso, children }) {
   if (!usuario) {
     return <Navigate to="/login" replace state={{ desde: ubicacion.pathname }} />
   }
-  if ((rol && usuario.rol !== rol) || (permiso && !usuario.permisos.includes(permiso))) {
+  if ((rol && usuario.rol !== rol) || (permiso && !tienePermiso(usuario, permiso))) {
     return <Navigate to={RUTA_POR_ROL[usuario.rol]} replace />
   }
   return children

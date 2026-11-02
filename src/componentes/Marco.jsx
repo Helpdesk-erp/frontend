@@ -4,12 +4,18 @@ import {
   AppBar, Avatar, Box, Divider, Drawer, IconButton, List, ListItemButton, ListItemIcon, ListItemText,
   Menu, MenuItem, Stack, Toolbar, Tooltip, Typography,
 } from '@mui/material'
+import BadgeIcon from '@mui/icons-material/BadgeOutlined'
+import BusinessIcon from '@mui/icons-material/BusinessOutlined'
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumberOutlined'
 import LogoutIcon from '@mui/icons-material/LogoutOutlined'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccountsOutlined'
 import MenuBookIcon from '@mui/icons-material/MenuBookOutlined'
 import MenuIcon from '@mui/icons-material/Menu'
+import PaymentsIcon from '@mui/icons-material/PaymentsOutlined'
+import SchoolIcon from '@mui/icons-material/SchoolOutlined'
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboardOutlined'
 import SupportAgentIcon from '@mui/icons-material/SupportAgentOutlined'
-import { NOMBRE_ROL, RUTA_POR_ROL, useSesion } from '../auth/sesion.js'
+import { NOMBRE_ROL, RUTA_POR_ROL, tienePermiso, useSesion } from '../auth/sesion.js'
 import BotonTema from './BotonTema.jsx'
 import { CargandoDashboard } from './Cargando.jsx'
 
@@ -26,9 +32,28 @@ export default function Marco() {
   const [anclaCuenta, setAnclaCuenta] = useState(null)
 
   // Solo se muestran las opciones que el rol puede usar
+  const propios = usuario.rol === 'cliente' || usuario.rol === 'agente_soporte'
   const opciones = [
     { texto: 'Panel principal', icono: <SpaceDashboardIcon />, ruta: RUTA_POR_ROL[usuario.rol] },
-    usuario.permisos.includes('conocimiento:buscar') && {
+    tienePermiso(usuario, ['tickets:ver_todos', 'tickets:ver_asignados', 'tickets:ver_propios']) && {
+      texto: propios ? 'Mis tickets' : 'Tickets', icono: <ConfirmationNumberIcon />, ruta: '/tickets',
+    },
+    tienePermiso(usuario, ['clientes:gestionar', 'clientes:ver']) && {
+      texto: 'Clientes', icono: <BusinessIcon />, ruta: '/clientes',
+    },
+    tienePermiso(usuario, 'empleados:gestionar') && {
+      texto: 'Empleados', icono: <BadgeIcon />, ruta: '/empleados',
+    },
+    tienePermiso(usuario, 'usuarios:gestionar') && {
+      texto: 'Usuarios', icono: <ManageAccountsIcon />, ruta: '/usuarios',
+    },
+    tienePermiso(usuario, ['pagos:registrar', 'pagos:ver']) && {
+      texto: 'Pagos', icono: <PaymentsIcon />, ruta: '/pagos',
+    },
+    tienePermiso(usuario, ['capacitaciones:gestionar', 'capacitaciones:dictar', 'capacitaciones:inscribirse']) && {
+      texto: 'Capacitaciones', icono: <SchoolIcon />, ruta: '/capacitaciones',
+    },
+    tienePermiso(usuario, 'conocimiento:buscar') && {
       texto: 'Base de conocimiento', icono: <MenuBookIcon />, ruta: '/conocimiento',
     },
   ].filter(Boolean)

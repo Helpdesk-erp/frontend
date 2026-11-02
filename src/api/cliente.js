@@ -39,6 +39,9 @@ export function guardarSesion(sesion) {
 export async function api(ruta, { metodo = 'GET', cuerpo, consulta } = {}) {
   const sesion = leerSesionGuardada()
   const url = BASE + ruta + (consulta ? '?' + new URLSearchParams(consulta) : '')
+  // Login y registro no llevan token: Spring revisa el encabezado aunque la ruta sea pública,
+  // y un token vencido guardado en el navegador haría fallar el inicio de sesión
+  const publica = ruta === '/auth/login' || ruta === '/auth/registro'
 
   let respuesta
   try {
@@ -46,7 +49,7 @@ export async function api(ruta, { metodo = 'GET', cuerpo, consulta } = {}) {
       method: metodo,
       headers: {
         'Content-Type': 'application/json',
-        ...(sesion?.token && { Authorization: `Bearer ${sesion.token}` }),
+        ...(sesion?.token && !publica && { Authorization: `Bearer ${sesion.token}` }),
       },
       body: cuerpo ? JSON.stringify(cuerpo) : undefined,
     })
@@ -58,7 +61,7 @@ export async function api(ruta, { metodo = 'GET', cuerpo, consulta } = {}) {
   if (!respuesta.ok) {
     const error = new ErrorApi(respuesta.status, datos?.mensaje ?? `Error ${respuesta.status}`, datos?.errores)
     // Sesión cerrada o vencida en el servidor: ProveedorSesion escucha este evento y saca al usuario
-    if (respuesta.status === 401 && sesion?.token && !ruta.startsWith('/auth/login')) {
+    if (respuesta.status === 401 && sesion?.token && !publica) {
       window.dispatchEvent(new CustomEvent('helpdesk:sesion-vencida', { detail: error.message }))
     }
     throw error

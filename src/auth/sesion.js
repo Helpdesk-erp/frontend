@@ -14,6 +14,12 @@ export const RUTA_POR_ROL = {
   auditor: '/auditor',
 }
 
+/** true si el usuario tiene el permiso, o al menos uno de la lista. */
+export function tienePermiso(usuario, permiso) {
+  const permisos = Array.isArray(permiso) ? permiso : [permiso]
+  return permisos.some((p) => usuario?.permisos.includes(p))
+}
+
 export const NOMBRE_ROL = {
   administrador: 'Administrador',
   agente_soporte: 'Agente de soporte',

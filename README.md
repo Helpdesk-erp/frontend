@@ -41,15 +41,31 @@ No suba un `package-lock.json`. Si alguien corre `npm install` por error, el `.g
 |---|---|
 | `api/` | `cliente.js`: hace las peticiones, agrega el token y convierte los errores del backend en `ErrorApi` |
 | `auth/` | Sesión del usuario (contexto de React) y las rutas protegidas por rol o permiso |
-| `componentes/` | Piezas que comparten las pantallas: marco con el menú, tablas de tickets, gráfico de barras, buscador de la base de conocimiento |
-| `paginas/` | Login, registro, base de conocimiento y un dashboard por rol en `dashboards/` |
-| `utilidades/` | Formato de fechas y pesos en español, etiquetas de los estados |
+| `componentes/` | Piezas que comparten las pantallas: marco con el menú, tablas de tickets, gráfico de barras, buscador de la base de conocimiento, diálogos de confirmación, de pago y de contraseña temporal |
+| `paginas/` | Login, registro y un dashboard por rol en `dashboards/`. Cada módulo en su carpeta: `tickets/`, `clientes/`, `empleados/`, `usuarios/`, `pagos/`, `capacitaciones/`, `conocimiento/` |
+| `utilidades/` | Formato de fechas y pesos en español, etiquetas de los estados, reglas de los formularios y avisos |
+
+## Pantallas por rol
+
+El menú lateral solo muestra lo que el rol puede usar, según los permisos de la colección `roles`.
+
+| Ruta | Rol | Qué se hace |
+|---|---|---|
+| `/tickets` | Todos | Cliente: todos sus tickets. Agente: los asignados. Administrador y auditor: todos, con filtros |
+| `/tickets/nuevo` | Cliente | Formulario dinámico: los datos técnicos salen de `campos_ticket` del paquete |
+| `/tickets/:id` | Todos | Detalle e historial. Cliente: editar, eliminar, confirmar y cerrar. Administrador: asignar. Agente: atender, escribir la solución y resolver |
+| `/conocimiento/nuevo/:ticketId` | Agente | Artículo a partir de un ticket resuelto |
+| `/clientes`, `/clientes/nuevo`, `/clientes/:id` | Administrador (auditor en solo lectura) | Registrar, editar contacto, contratar paquetes, registrar pagos, inactivar |
+| `/empleados`, `/empleados/nuevo`, `/empleados/:id` | Administrador | Registrar, editar contrato y retirar |
+| `/usuarios` | Administrador | Cuentas de empleados, cambiar correo, rol y estado, marcar credenciales enviadas |
+| `/pagos` | Administrador (auditor en solo lectura) | Historial y registro de pagos aprobados o rechazados |
+| `/capacitaciones` | Administrador, agente y cliente | Programar y cancelar; registrar asistencia; inscribirse |
 
 ## Librerías
 
 | Librería | Para qué |
 |---|---|
-| React Router 7 | Rutas: `/login`, `/registro`, `/administrador`, `/agente`, `/cliente`, `/auditor`, `/conocimiento` |
+| React Router 7 | Rutas: `/login`, `/registro`, un dashboard por rol y las pantallas de la tabla anterior |
 | TanStack Query | Peticiones con caché. Los dashboards se actualizan solos cada 30 segundos |
 | React Hook Form | Formularios con validación por campo. Los errores del backend llegan al campo con `setError` |
 | Material UI y MUI X Charts | Componentes adaptables a celular y gráficos de barras |

@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query'
+import { Link as RouterLink } from 'react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  Alert, Box, Divider, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
+  Alert, Box, Button, Divider, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
 } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../api/cliente.js'
 import { useSesion } from '../../auth/sesion.js'
 import BuscadorConocimiento from '../../componentes/BuscadorConocimiento.jsx'
@@ -13,6 +15,7 @@ import Seccion from '../../componentes/Seccion.jsx'
 import TablaTickets from '../../componentes/TablaTickets.jsx'
 import TarjetaIndicador from '../../componentes/TarjetaIndicador.jsx'
 import Vacio from '../../componentes/Vacio.jsx'
+import { useAvisos } from '../../utilidades/avisos.js'
 import { fechaCalendario, METODOS_PAGO, PAQUETES, periodo, pesos, TIPOS_CLIENTE } from '../../utilidades/formato.js'
 
 /** Explica por qué está suspendido un paquete, con el último pago rechazado de ese paquete. */
@@ -29,9 +32,23 @@ function AvisoSuspension({ paquete, pagos, hayOtrosActivos }) {
 
 export default function DashboardCliente() {
   const { recienRegistrado, cerrarBienvenida } = useSesion()
+  const avisar = useAvisos()
+  const queryClient = useQueryClient()
   const { data, isPending, error } = useQuery({
     queryKey: ['dashboard', 'cliente'],
     queryFn: () => api('/dashboard/cliente'),
+  })
+
+  // RF-28: confirmar la solución cierra el ticket
+  const cerrarTicket = useMutation({
+    mutationFn: (id) => api(`/tickets/${id}/cierre`, { metodo: 'POST' }),
+    onSuccess: (ticket) => {
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'cliente'] })
+      queryClient.invalidateQueries({ queryKey: ['tickets'] })
+      queryClient.setQueryData(['ticket', ticket.id], ticket)
+      avisar(`Gracias. El ticket ${ticket.id} quedó cerrado`)
+    },
+    onError: (e) => avisar(e.message, 'error'),
   })
 
   if (isPending) return <CargandoDashboard />
@@ -50,10 +67,17 @@ export default function DashboardCliente() {
         </Alert>
       )}
 
-      <Encabezado
-        titulo={cliente.nombre}
-        subtitulo={`${TIPOS_CLIENTE[cliente.tipo_cliente]} · ${cliente.tipo_documento} ${cliente.numero_documento} · ${cliente.direccion.ciudad}`}
-      />
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between', alignItems: { sm: 'flex-end' } }}>
+        <Encabezado
+          titulo={cliente.nombre}
+          subtitulo={`${TIPOS_CLIENTE[cliente.tipo_cliente]} · ${cliente.tipo_documento} ${cliente.numero_documento} · ${cliente.direccion.ciudad}`}
+        />
+        {paquetes.some((p) => p.estado === 'activo') && (
+          <Button component={RouterLink} to="/tickets/nuevo" variant="contained" startIcon={<AddIcon />} sx={{ flexShrink: 0 }}>
+            Nuevo ticket
+          </Button>
+        )}
+      </Stack>
 
       {suspendidos.map((paquete) => (
         <AvisoSuspension
@@ -95,7 +119,7 @@ export default function DashboardCliente() {
           </Seccion>
         </Grid>
         <Grid size={{ xs: 12, lg: 7 }}>
-          <Seccion titulo="Mis tickets recientes" sinRelleno>
+          <Seccion titulo="Mis tickets recientes" accion={<Button component={RouterLink} to="/tickets" size="small">Ver todos</Button>} sinRelleno>
             <TablaTickets tickets={data.tickets_recientes} persona="agente" vacio="No ha reportado tickets." />
           </Seccion>
         </Grid>
@@ -106,7 +130,11 @@ export default function DashboardCliente() {
           </Seccion>
         </Grid>
         <Grid size={{ xs: 12, lg: 5 }}>
-          <Seccion titulo="Capacitaciones" subtitulo="Para los paquetes que tiene activos">
+          <Seccion
+            titulo="Capacitaciones"
+            subtitulo="Para los paquetes que tiene activos"
+            accion={<Button component={RouterLink} to="/capacitaciones" size="small">Inscribirme</Button>}
+          >
             <ListaCapacitaciones capacitaciones={data.capacitaciones} conInscripcion vacio="No hay capacitaciones próximas para sus paquetes." />
           </Seccion>
         </Grid>
@@ -125,6 +153,18 @@ export default function DashboardCliente() {
                     </Stack>
                     <Typography variant="body2" sx={{ fontWeight: 600 }}>{ticket.asunto}</Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>{ticket.solucion}</Typography>
+                    <Stack direction="row" spacing={1} sx={{ mt: 1, justifyContent: 'flex-end' }}>
+                      <Button size="small" component={RouterLink} to={`/tickets/${ticket.id}`}>Ver ticket</Button>
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        color="success"
+                        loading={cerrarTicket.isPending && cerrarTicket.variables === ticket.id}
+                        onClick={() => cerrarTicket.mutate(ticket.id)}
+                      >
+                        Confirmar y cerrar
+                      </Button>
+                    </Stack>
                   </Box>
                 ))}
               </Stack>

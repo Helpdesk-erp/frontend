@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router'
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
 import { fecha, PAQUETES } from '../utilidades/formato.js'
 import { ChipEstadoTicket, ChipPrioridad } from './Chips.jsx'
@@ -6,9 +7,13 @@ import Vacio from './Vacio.jsx'
 const SOLO_ESCRITORIO = { display: { xs: 'none', md: 'table-cell' } }
 
 /**
+ * Cada fila abre el detalle del ticket (/tickets/:id).
+ *
  * @param {'cliente' | 'agente'} persona qué columna mostrar: quién reportó o quién atiende
  */
 export default function TablaTickets({ tickets, persona = 'cliente', vacio = 'No hay tickets.' }) {
+  const navegar = useNavigate()
+
   if (!tickets?.length) {
     return <Box sx={{ px: 2.5 }}><Vacio>{vacio}</Vacio></Box>
   }
@@ -27,7 +32,14 @@ export default function TablaTickets({ tickets, persona = 'cliente', vacio = 'No
         </TableHead>
         <TableBody>
           {tickets.map((ticket) => (
-            <TableRow key={ticket.id} hover>
+            <TableRow
+              key={ticket.id}
+              hover
+              onClick={() => navegar(`/tickets/${ticket.id}`)}
+              onKeyDown={(e) => e.key === 'Enter' && navegar(`/tickets/${ticket.id}`)}
+              tabIndex={0}
+              sx={{ cursor: 'pointer' }}
+            >
               <TableCell sx={{ pl: 2.5, maxWidth: 320 }}>
                 <Typography variant="caption" sx={{ color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
                   {ticket.id}

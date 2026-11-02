@@ -5,8 +5,10 @@ import { SesionContext } from './sesion.js'
 
 function sesionInicial() {
   const sesion = leerSesionGuardada()
-  // Un token vencido no sirve; se descarta antes de la primera petición
-  return sesion && new Date(sesion.expira) > new Date() ? sesion : null
+  if (sesion && new Date(sesion.expira) > new Date()) return sesion
+  // Un token vencido no sirve; se borra del navegador antes de la primera petición
+  guardarSesion(null)
+  return null
 }
 
 export default function ProveedorSesion({ children }) {

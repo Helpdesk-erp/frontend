@@ -1,6 +1,7 @@
+import { Link as RouterLink } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import {
-  Avatar, Box, Divider, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
+  Avatar, Box, Button, Divider, Grid, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography,
 } from '@mui/material'
 import { api } from '../../api/cliente.js'
 import { NOMBRE_ROL, useSesion } from '../../auth/sesion.js'
@@ -48,7 +49,12 @@ export default function DashboardAdministrador() {
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, lg: 8 }}>
-          <Seccion titulo="Bandeja sin atender" subtitulo="Tickets que esperan agente, del más antiguo al más reciente" sinRelleno>
+          <Seccion
+            titulo="Bandeja sin atender"
+            subtitulo="Tickets que esperan agente, del más antiguo al más reciente. Abra uno para asignarlo"
+            accion={<Button component={RouterLink} to="/tickets" size="small">Ver todos</Button>}
+            sinRelleno
+          >
             <TablaTickets tickets={data.sin_atender} persona="cliente" vacio="No hay tickets esperando asignación." />
           </Seccion>
         </Grid>
@@ -114,7 +120,11 @@ export default function DashboardAdministrador() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <Seccion titulo="Pagos rechazados" subtitulo="El paquete queda suspendido hasta que se pague">
+          <Seccion
+            titulo="Pagos rechazados"
+            subtitulo="El paquete queda suspendido hasta que se pague"
+            accion={<Button component={RouterLink} to="/pagos" size="small">Registrar pago</Button>}
+          >
             {data.pagos_rechazados.length === 0 ? (
               <Vacio>No hay pagos rechazados.</Vacio>
             ) : (
@@ -137,13 +147,18 @@ export default function DashboardAdministrador() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <Seccion titulo="Próximas capacitaciones">
+          <Seccion titulo="Próximas capacitaciones" accion={<Button component={RouterLink} to="/capacitaciones" size="small">Ver todas</Button>}>
             <ListaCapacitaciones capacitaciones={data.proximas_capacitaciones} vacio="No hay capacitaciones programadas." />
           </Seccion>
         </Grid>
 
         <Grid size={12}>
-          <Seccion titulo="Usuarios del sistema" subtitulo="Cuentas de empleados y clientes, sin datos de acceso" sinRelleno>
+          <Seccion
+            titulo="Usuarios del sistema"
+            subtitulo="Cuentas de empleados y clientes, sin datos de acceso"
+            accion={<Button component={RouterLink} to="/usuarios" size="small">Gestionar</Button>}
+            sinRelleno
+          >
             <TableContainer>
               <Table size="small">
                 <TableHead>
